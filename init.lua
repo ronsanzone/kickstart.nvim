@@ -166,6 +166,13 @@ vim.o.scrolloff = 10
 -- See `:help 'confirm'`
 vim.o.confirm = true
 
+-- Make tabs appear as 4 width instead of 8
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+
+-- Relative line numbers
+vim.o.relativenumber = true
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -346,6 +353,7 @@ require('lazy').setup({
       spec = {
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
+        { '<leader>th', group = '[T]oggle [H]int' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
       },
     },
@@ -963,13 +971,30 @@ require('lazy').setup({
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
+  -- Start of new plugins:
+  'christoomey/vim-tmux-navigator',
+
+  -- Test runner integration
+  {
+    'vim-test/vim-test',
+    dependencies = {
+      'preservim/vimux',
+    },
+    keys = {
+      { '<leader>rt', ':TestNearest<CR>', desc = 'Run nearest [T]est' },
+      { '<leader>rT', ':TestFile<CR>', desc = 'Run all [T]ests in file' },
+    },
+    config = function()
+      -- Set test strategy to run tests in a Neovim terminal
+      vim.g['test#strategy'] = 'vimux'
+    end,
+  },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
 
   -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-  --
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
