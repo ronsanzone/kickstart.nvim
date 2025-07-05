@@ -118,6 +118,9 @@ vim.schedule(function()
   vim.o.clipboard = 'unnamedplus'
 end)
 
+-- Wrap lines by word
+vim.o.linebreak = true
+
 -- Enable break indent
 vim.o.breakindent = true
 
@@ -977,6 +980,9 @@ require('lazy').setup({
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter-context',
+    },
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
@@ -993,6 +999,14 @@ require('lazy').setup({
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
+    config = function()
+      -- Set up treesitter context
+      require('treesitter-context').setup {
+        line_numbers = false,
+        max_lines = 5,
+        multiline_threshold = 3,
+      }
+    end,
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
     --
