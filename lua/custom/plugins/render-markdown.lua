@@ -4,9 +4,9 @@ return {
   ---@module 'render-markdown'
   ---@type render.md.UserConfig
   opts = {
-    file_types = { 'markdown', 'copilot-chat' },
+    file_types = { 'markdown' },
   },
-  ft = { 'markdown', 'copilot-chat' },
+  ft = { 'markdown' },
   config = function()
     require('render-markdown').setup {
       completions = { lsp = { enabled = true } },
