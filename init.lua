@@ -84,7 +84,9 @@ I hope you enjoy your Neovim journey,
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
 
+vim.uv.os_setenv('JAVA_HOME', '/Users/ron.sanzone/.asdf/installs/java/temurin-21.0.10+7.0.LTS')
 -- Set <space> as the leader key
+--
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
@@ -428,12 +430,18 @@ require('lazy').setup({
         -- You can put your default mappings / updates / etc. in here
         --  All the info you're looking for is in `:help telescope.setup()`
         --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
-        -- pickers = {}
+        defaults = {
+          hidden = true,
+          file_ignore_patterns = { '.git/' },
+        },
+        pickers = {
+          find_files = {
+            hidden = true,
+          },
+          live_grep = {
+            additional_args = { '--hidden' },
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -741,6 +749,7 @@ require('lazy').setup({
             },
           },
         },
+        jdtls = {},
       }
 
       -- Ensure the servers and tools above are installed
