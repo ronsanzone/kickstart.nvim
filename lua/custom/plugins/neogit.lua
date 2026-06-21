@@ -4,7 +4,8 @@ return {
   dependencies = {
     'nvim-lua/plenary.nvim', -- required
 
-    'esmuellert/codediff.nvim', -- optional
+    'sindrets/diffview.nvim', -- optional
+    --'esmuellert/codediff.nvim', -- optional
 
     'nvim-telescope/telescope.nvim', -- optional
   },

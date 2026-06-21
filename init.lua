@@ -1020,34 +1020,52 @@ require('lazy').setup({
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
-    -- Keep the legacy module-based API used below (`nvim-treesitter.configs`).
-    -- The default branch no longer ships that module.
-    branch = 'master',
+    -- The `master` branch is deprecated and crashes on Neovim 0.12+
+    -- (incompatible query predicate handlers). `main` is the supported branch.
+    branch = 'main',
+    lazy = false, -- the `main` branch does not support lazy-loading
+    build = ':TSUpdate',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-context',
     },
-    build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     config = function()
-      require('nvim-treesitter.configs').setup {
-        ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'go' },
-        -- Autoinstall languages that are not installed
-        auto_install = true,
-        highlight = {
-          enable = true,
-          -- Markdown injections currently error under Neovim 0.12:
-          -- `attempt to call method 'range' (a nil value)`.
-          disable = function(lang, bufnr)
-            return lang == 'markdown' or lang == 'markdown_inline' or vim.bo[bufnr].filetype == 'markdown'
-          end,
-          -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-          --  If you are experiencing weird indenting issues, add the language to
-          --  the list of additional_vim_regex_highlighting and disabled languages for indent.
-          additional_vim_regex_highlighting = { 'ruby' },
-        },
-        indent = { enable = true, disable = { 'ruby' } },
+      -- Parsers to install. On `main` there is no `auto_install`; install explicitly.
+      require('nvim-treesitter').install {
+        'bash',
+        'c',
+        'diff',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'go',
       }
+
+      -- The `main` branch has no `highlight.enable`/`indent.enable`. Start
+      -- treesitter highlighting (and indentation) per-buffer via FileType.
+      vim.api.nvim_create_autocmd('FileType', {
+        callback = function(args)
+          local buf = args.buf
+          local ft = vim.bo[buf].filetype
+          if ft == '' then
+            return
+          end
+          -- Only start if a parser for this filetype is installed/available.
+          if not pcall(vim.treesitter.start, buf) then
+            return
+          end
+          -- Ruby relies on vim's regex indent; skip treesitter indentexpr there.
+          if ft ~= 'ruby' then
+            vim.bo[buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          end
+        end,
+      })
+
       -- Set up treesitter context
       require('treesitter-context').setup {
         line_numbers = false,
@@ -1060,12 +1078,6 @@ require('lazy').setup({
         end,
       }
     end,
-    -- There are additional nvim-treesitter modules that you can use to interact
-    -- with nvim-treesitter. You should go explore a few and see what interests you:
-    --
-    --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-    --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-    --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
   -- Start of new plugins:
   'christoomey/vim-tmux-navigator',
