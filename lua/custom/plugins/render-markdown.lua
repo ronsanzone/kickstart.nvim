@@ -1,5 +1,8 @@
 return {
   'MeanderingProgrammer/render-markdown.nvim',
+  -- Disabled while Neovim 0.12 + Treesitter Markdown injections throw:
+  -- `attempt to call method 'range' (a nil value)`.
+  enabled = false,
   dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
   ---@module 'render-markdown'
   ---@type render.md.UserConfig

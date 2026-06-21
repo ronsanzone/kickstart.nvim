@@ -238,6 +238,15 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+vim.api.nvim_create_autocmd('FileType', {
+  desc = 'Avoid Neovim 0.12 Treesitter Markdown injection crash',
+  group = vim.api.nvim_create_augroup('disable-markdown-treesitter', { clear = true }),
+  pattern = 'markdown',
+  callback = function(event)
+    pcall(vim.treesitter.stop, event.buf)
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -1011,6 +1020,9 @@ require('lazy').setup({
   },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    -- Keep the legacy module-based API used below (`nvim-treesitter.configs`).
+    -- The default branch no longer ships that module.
+    branch = 'master',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-context',
     },
@@ -1024,6 +1036,11 @@ require('lazy').setup({
         auto_install = true,
         highlight = {
           enable = true,
+          -- Markdown injections currently error under Neovim 0.12:
+          -- `attempt to call method 'range' (a nil value)`.
+          disable = function(lang, bufnr)
+            return lang == 'markdown' or lang == 'markdown_inline' or vim.bo[bufnr].filetype == 'markdown'
+          end,
           -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
           --  If you are experiencing weird indenting issues, add the language to
           --  the list of additional_vim_regex_highlighting and disabled languages for indent.
@@ -1036,6 +1053,11 @@ require('lazy').setup({
         line_numbers = false,
         max_lines = 5,
         multiline_threshold = 3,
+        -- nvim-treesitter-context also trips the Markdown injection crash, so
+        -- don't attach context to Markdown buffers.
+        on_attach = function(bufnr)
+          return vim.bo[bufnr].filetype ~= 'markdown'
+        end,
       }
     end,
     -- There are additional nvim-treesitter modules that you can use to interact
