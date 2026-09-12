@@ -2,14 +2,14 @@ set background=dark
 hi clear
 syntax reset
 let g:colors_name="theme-picker"
-hi Normal guifg=#ddf7ff guibg=#0B0C16
-hi CursorLine guibg=#20372e
-hi Visual guifg=#0B0C16 guibg=#ddf7ff
-hi TabLineSel guifg=#0B0C16 guibg=#ddf7ff
-hi Comment guifg=#6a6e95
-hi String guifg=#4fe88f
-hi Function guifg=#829dd4
-hi Keyword guifg=#86a7df
-hi Type guifg=#7cf8f7
-hi Error guifg=#50f872
-hi WarningMsg guifg=#50f7d4
+hi Normal guifg=#fff4d8 guibg=#292025
+hi CursorLine guibg=#463126
+hi Visual guifg=#fff4d8 guibg=#6b5650
+hi TabLineSel guifg=#fff4d8 guibg=#6b5650
+hi Comment guifg=#a58c82
+hi String guifg=#9fad68
+hi Function guifg=#c87d2a
+hi Keyword guifg=#c98c97
+hi Type guifg=#9eb8b2
+hi Error guifg=#cf7358
+hi WarningMsg guifg=#c8964b
